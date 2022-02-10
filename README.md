@@ -7,7 +7,7 @@
 **Goals:**  
 
 Apply clustering algorithms to multiple time series (TS):
-- A list of cryptocurrencies, including Bitcoin (~100)
+- A list of cryptocurrencies (CC), including Bitcoin (~100)
     - 30 days of closing prices
     - 3 days hourly closing prices
     - 1 hour minute closing prices
@@ -17,7 +17,7 @@ Apply clustering algorithms to multiple time series (TS):
 
 **Additional goals:**  
 
-- Build risk profile for cryptocurrencies (CC) portfolios from one cluster and from
+- Build risk profile for CC portfolios from one cluster and from
 different clusters;
 - Apply Matrix Profile methods from [matrixprofile](https://github.com/matrix-profile-foundation/matrixprofile) library to find repeated motifs and discords (anomalies) on CC from various clusters.
 
