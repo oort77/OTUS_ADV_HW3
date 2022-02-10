@@ -3,7 +3,7 @@
 ### **Homework 3** 
 
 ### Cluster analysis of time series
-![clockworks](https://user-images.githubusercontent.com/73858914/153239767-95271e10-01ad-4b67-ab48-a2e99b695d8d.png)
+![clockworks](https://user-images.githubusercontent.com/73858914/153416075-05ab7f45-3186-40af-8727-f62892fc1976.png)  
 **Goals:**  
 
 Apply clustering algorithms to multiple time series (TS):
@@ -19,14 +19,12 @@ Apply clustering algorithms to multiple time series (TS):
 
 - Build risk profile for CC portfolios from one cluster and from
 different clusters;
-- Apply MatrixProfile methods (from Skimpy library) to find
-repeated motifs and discords (anomalies) on cryptocurrencies (CC) from
-various clusters.
+- Apply Matrix Profile methods from [matrixprofile](https://github.com/matrix-profile-foundation/matrixprofile) library to find repeated motifs and discords (anomalies) on cryptocurrencies (CC) from various clusters.
 
 
 **Means:**  
 
-All preprocessing and pipelines management will be done in ATOM.
+All preprocessing and pipelines management will be done in [ATOM](https://tvdboom.github.io/ATOM/).
 
 **Data:**  
 
