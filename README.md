@@ -1,6 +1,6 @@
 
 **OTUS Machine Learning Advanced**
-### **Homework 3** 
+### **Homework 3** - work in progress
 
 ### Cluster analysis of time series
 ![clockworks](https://user-images.githubusercontent.com/73858914/153416075-05ab7f45-3186-40af-8727-f62892fc1976.png)  
