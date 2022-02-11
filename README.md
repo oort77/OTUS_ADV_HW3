@@ -17,6 +17,7 @@ Apply clustering algorithms to multiple time series (TS):
 
 **Additional goals:**  
 
+(separate notebooks)
 - Build risk profile for CC portfolios from one cluster and from
 different clusters;
 - Apply Matrix Profile methods from [matrixprofile](https://github.com/matrix-profile-foundation/matrixprofile) library to find repeated motifs and discords (anomalies) on CC from various clusters.
