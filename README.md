@@ -24,7 +24,8 @@ different clusters;
 
 **Means:**  
 
-All preprocessing and pipelines management will be done in [ATOM](https://tvdboom.github.io/ATOM/).
+- All TS computations will be done in [tslearn](https://github.com/tslearn-team/tslearn) and
+[tsfel](https://github.com/fraunhoferportugal/tsfel).
 
 **Data:**  
 
