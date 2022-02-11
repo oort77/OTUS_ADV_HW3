@@ -11,9 +11,9 @@ Apply clustering algorithms to multiple time series (TS):
     - 30 days of closing prices
     - 3 days hourly closing prices
     - 1 hour minute closing prices
-- Compare KNeighbours basic and DTW approaches;
-- Try TS clustering after automatic feature generation with TSFEL;
-- Analyze composition of clusters without Bitcoin.
+- Compare KNeighbours basic and DTW approaches;  ☑︎
+- Try TS clustering after automatic feature generation with TSFEL;  ☑︎
+- Analyze composition of clusters without Bitcoin.  ☑︎
 
 **Additional goals:**  
 
