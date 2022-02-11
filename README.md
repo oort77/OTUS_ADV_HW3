@@ -11,12 +11,13 @@ Apply clustering algorithms to multiple time series (TS):
     - 30 days of closing prices
     - 3 days hourly closing prices
     - 1 hour minute closing prices
-- Compare KNN (or similar) and DTW approaches;
-- Try TS clustering after automatic feature generation with TSFEL;
-- Analyze composition of clusters without Bitcoin.
+- Compare KNeighbours basic and DTW approaches;  ☑︎
+- Try TS clustering after automatic feature generation with TSFEL;  ☑︎
+- Analyze composition of clusters without Bitcoin.  ☑︎
 
 **Additional goals:**  
 
+(separate notebooks)
 - Build risk profile for CC portfolios from one cluster and from
 different clusters;
 - Apply Matrix Profile methods from [matrixprofile](https://github.com/matrix-profile-foundation/matrixprofile) library to find repeated motifs and discords (anomalies) on CC from various clusters.
@@ -24,7 +25,8 @@ different clusters;
 
 **Means:**  
 
-All preprocessing and pipelines management will be done in [ATOM](https://tvdboom.github.io/ATOM/).
+- All TS computations will be done in [tslearn](https://github.com/tslearn-team/tslearn) and
+[tsfel](https://github.com/fraunhoferportugal/tsfel).
 
 **Data:**  
 
