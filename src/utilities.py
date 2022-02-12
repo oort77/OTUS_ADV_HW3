@@ -33,9 +33,22 @@ from umap import UMAP
 from kneed import KneeLocator
 from tqdm.autonotebook import tqdm
 
+import gdown
+import shutil
+import pickle
+import requests
+
 random_state = 17
 scaler = StandardScaler()
 n_jobs = -1
+
+
+def set_api_key():
+
+    cc.cryptocompare._set_api_key_parameter(
+        "5db769e8ae211fc8c106e10623db6384dc64db9c26b2a2df708f8d1b53f99f92"
+    )
+
 
 def get_price(ticker: str, time_interval: str, limit: int):
     if time_interval == "day":
@@ -60,11 +73,68 @@ def get_all_cc(time_interval: str, limit: int):
             d = get_price(tick, time_interval, limit)
             one_cc = pd.DataFrame.from_dict(d)["close"]
             one_cc.rename(index=tick, inplace=True)
-            df = pd.concat([df, one_cc], axis=1)  # ,ignore_index=True)
+            df = pd.concat([df, one_cc], axis=1)
             print("OK")
         except:
             print(f"{tick} passed")
     return df
+
+
+def get_data():
+    if os.path.isdir("../data") == False:
+        os.mkdir("../data")
+
+    url_arch = (
+        "https://drive.google.com/uc?export=download&id=1XCOhxPfRDp6SxMyPwPO1nse3MI2vOFvP"
+    )
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
+    }
+
+    # Download, if necessary
+    if not os.path.exists("../data/Archive.zip"):
+        # Check if data archive is still in Google Drive
+        if requests.head(url_arch, headers=headers).status_code in [200, 302]:
+            gdown.download(url_arch, output="../data/Archive.zip")
+            shutil.unpack_archive("../data/Archive.zip", "../data")
+            with open("../data/data_day.pickle", "rb") as f:
+                data_day = pickle.load(f)
+            with open("../data/data_hour.pickle", "rb") as f:
+                data_hour = pickle.load(f)
+            with open("../data/data_minute.pickle", "rb") as f:
+                data_minute = pickle.load(f)
+        # If not, get data from cryptocompare.com
+        else:
+            data_day = get_all_cc("day", 30)
+            data_hour = get_all_cc("hour", 72)
+            data_minute = get_all_cc("minute", 60)
+    # Extract data from existing pickles
+    else:
+        with open("../data/data_day.pickle", "rb") as f:
+            data_day = pickle.load(f)
+        with open("../data/data_hour.pickle", "rb") as f:
+            data_hour = pickle.load(f)
+        with open("../data/data_minute.pickle", "rb") as f:
+            data_minute = pickle.load(f)
+
+    return data_day, data_hour, data_minute
+
+    # Check CC list dataframe
+    if not os.path.exists("../data/cryptocurrencies.pickle"):
+        cc_url = "https://drive.google.com/uc?export=download&id=1Q09m-PfvhiBZ75lwXaHtafsajmXPW3WD"
+        gdown.download(cc_url, output="../data/cryptocurrencies.pickle")
+    with open("../data/cryptocurrencies.pickle", "rb") as f:
+        ccs = pickle.load(f)
+    # tickers = ccs["ticker"].to_list()
+
+
+def pickle_data():
+    with open("../data/data_minute.pickle", "wb") as f:
+        pickle.dump(data_minute, f)
+    with open("../data/data_hour.pickle", "wb") as f:
+        pickle.dump(data_hour, f)
+    with open("../data/data_day.pickle", "wb") as f:
+        pickle.dump(data_day, f)
 
 # Utility functions for clustering study
 
@@ -155,7 +225,7 @@ def plot_clusters(data, n_clusters, title, metric="euclidean", model=TimeSeriesK
 # ************************ TO BE REVISED *****************************
 
 
-def visualize(model, **p):
+def visualize(X, model, **p):
     mdl = model(**p)
     X_clust = mdl.fit(X)
     X_color = X_clust.labels_.astype(str)
