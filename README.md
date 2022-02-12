@@ -7,7 +7,7 @@
 **Goals:**  
 
 Apply clustering algorithms to multiple time series (TS):
-- A list of cryptocurrencies (CC), including Bitcoin (~100)
+- For a list of cryptocurrencies (CC), including Bitcoin (~100), download ☑︎
     - 30 days of closing prices
     - 3 days hourly closing prices
     - 1 hour minute closing prices
@@ -32,17 +32,8 @@ different clusters;
 
 - CC prices will be downloaded with [cryptocompare](https://github.com/lagerfeuer/cryptocompare) library.
 
-**Choice of models:**  
-
-
-
-**Methodology:**  
-
-
-
 **Colab notebooks:**
 
-**______**  
-  
+otus_adv_hw3_dtw.ipynb: tslearn and tsfel  
 
-**______**  
+<a href="https://colab.research.google.com/github/oort77/OTUS_ADV_HW3/blob/main/notebooks/otus_adv_hw3_dtw.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
