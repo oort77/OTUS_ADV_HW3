@@ -169,7 +169,7 @@ def elbow_study(data, k_max: int = 10, metric="euclidean",
                           curve="convex", direction="decreasing")
     # Use 3 clusters in case kneed doesn't find a knee
     n_clusters = kneedle.knee or 3
-    fig, ax1 = plt.subplots(figsize=(14, 5))
+    _, ax1 = plt.subplots(figsize=(14, 5))
     ax2 = ax1.twinx()
     ax1.plot(range(2, k_max), inertia, marker="s")
     ax1.set_title(f"The Elbow Method using Inertia\nmetric: {metric}")
@@ -291,7 +291,7 @@ def davies_bouldin_plot(data):
     for n in n_clusters:
         scores[n] = get_kmeans_score(data.T.values, n)
     n_cl = max(scores.keys(), key=(lambda k: scores[k]))
-
+    _, _ = plt.subplots(figsize=(15, 5))
     plt.plot(n_clusters, scores.values(),
              linestyle='--', marker='s', color='b')
     plt.xlabel("Number of clusters")
