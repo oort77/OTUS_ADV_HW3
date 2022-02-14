@@ -42,11 +42,13 @@ n_jobs = -1
 
 # Utility functions for cryptocompare downloads
 
+
 def set_api_key():
 
     cc.cryptocompare._set_api_key_parameter(
         "5db769e8ae211fc8c106e10623db6384dc64db9c26b2a2df708f8d1b53f99f92"
     )
+
 
 def get_tickers_list():
     # Check CC list dataframe
@@ -56,7 +58,8 @@ def get_tickers_list():
     with open("../data/cryptocurrencies.pickle", "rb") as f:
         ccs = pickle.load(f)
     return ccs["ticker"].to_list()
-    
+
+
 def get_price(ticker: str, time_interval: str, limit: int):
     if time_interval == "day":
         result = cc.get_historical_price_day(ticker, currency="USD",
@@ -92,54 +95,26 @@ def get_data():
     if os.path.isdir("../data") == False:
         os.mkdir("../data")
 
-    url_arch = (
-        "https://drive.google.com/uc?export=download&id=1XCOhxPfRDp6SxMyPwPO1nse3MI2vOFvP"
-    )
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
-    }
-    
     # Download, if necessary
-    if not os.path.exists("../data/Archive.zip"):
-        # Check if data archive is still in Google Drive
-        if requests.head(url_arch, headers=headers).status_code in [200, 302]:
-            try:
-                gdown.download(url_arch, output="../data/Archive.zip")
-                shutil.unpack_archive("../data/Archive.zip", "../data")
-                with open("../data/data_day.pickle", "rb") as f:
-                    data_day = pickle.load(f)
-                with open("../data/data_hour.pickle", "rb") as f:
-                    data_hour = pickle.load(f)
-                with open("../data/data_minute.pickle", "rb") as f:
-                    data_minute = pickle.load(f)
-            except:
-                print("Archive.zip is unavailable in Google Drive")
-        # If not, get data from cryptocompare.com
-        else:
-            data_day = get_all_cc("day", 100) # <----------------------------------------- 100
-            data_hour = get_all_cc("hour", 72)
-            data_minute = get_all_cc("minute", 60)
-    # Extract data from existing pickles
+    if not os.path.exists("../data/../data/data_day.pickle"):
+     # If not, get data from cryptocompare.com
+        # <----------------------------------------- 100
+        data_day = get_all_cc("day", 100)
+        data_hour = get_all_cc("hour", 72)
+        data_minute = get_all_cc("minute", 60)
     else:
-        with open("../data/data_day.pickle", "rb") as f:
-            data_day = pickle.load(f)
-        with open("../data/data_hour.pickle", "rb") as f:
-            data_hour = pickle.load(f)
-        with open("../data/data_minute.pickle", "rb") as f:
-            data_minute = pickle.load(f)
-
+        data_day = pd. read_pickle("../data/data_day.pickle")
+        data_hour = pd. read_pickle("../data/data_hour.pickle")
+        data_minute = pd. read_pickle("../data/data_minute.pickle")
 
     return data_day, data_hour, data_minute
 
 
 def pickle_data(data_day, data_hour, data_minute):
-    
-    with open("../data/data_day.pickle", "wb") as f:
-        pickle.dump(data_day, f)
-    with open("../data/data_hour.pickle", "wb") as f:
-        pickle.dump(data_hour, f)
-    with open("../data/data_minute.pickle", "wb") as f:
-        pickle.dump(data_minute, f)
+
+    data_day.to_pickle("../data/data_day.pickle")
+    data_hour.to_pickle("../data/data_hour.pickle")
+    data_minute.to_pickle("../data/data_minute.pickle")
 
 # Utility functions for clustering study
 
@@ -283,9 +258,9 @@ def clustering_study(data, metric, title):
 
 
 def get_kmeans_score(data, center):
-    # instantiate kmeans
+    # Instantiate kmeans
     kmeans = KMeans(n_clusters=center)
-    # Then fit the model to your data using the fit method
+    # Fit the model to data using the fit method
     model = kmeans.fit_predict(data)
     # Calculate Davies Bouldin score
     score = davies_bouldin_score(data, model)
