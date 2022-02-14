@@ -98,8 +98,7 @@ def get_data():
     # Download, if necessary
     if not os.path.exists("../data/../data/data_day.pickle"):
      # If not, get data from cryptocompare.com
-        # <----------------------------------------- 100
-        data_day = get_all_cc("day", 100)
+        data_day = get_all_cc("day", 30)
         data_hour = get_all_cc("hour", 72)
         data_minute = get_all_cc("minute", 60)
     else:
