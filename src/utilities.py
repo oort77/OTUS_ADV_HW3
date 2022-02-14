@@ -150,9 +150,9 @@ def elbow_study(data, k_max: int = 10, metric="euclidean",
     n_clusters = kneedle.knee or 3
     fig, ax1 = plt.subplots(figsize=(14, 5))
     ax2 = ax1.twinx()
-    ax1.plot(range(2, k_max), inertia, marker="s")
+    ax1.plot(range(2, k_max), inertia, color='b', marker="s")
     ax1.set_title(f"The Elbow Method using Inertia\nmetric: {metric}")
-    ax1.set_xlabel("Number of clusters")
+    ax1.set_xlabel("Number of clusters", color='b')
     ax1.set_ylabel("Inertia")
     ax2.plot(range(2, k_max), silhouette, 'r-')
     ax2.set_ylabel('Silhouette', color='r')
