@@ -6,15 +6,13 @@
 
 # Utility functions for otus_adv_hw3.ipynb
 
-# Utility functions for cryptocompare downloads
-
 # Import libraries
 
 import os
 import pandas as pd
 import numpy as np
 
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import davies_bouldin_score
 from sklearn.cluster import KMeans
 from scipy.spatial.distance import pdist
@@ -26,9 +24,9 @@ import cryptocompare as cc
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-import plotly.express as px
-import plotly
-from umap import UMAP
+# import plotly.express as px
+# import plotly
+# from umap import UMAP
 
 from kneed import KneeLocator
 from tqdm.autonotebook import tqdm
@@ -42,6 +40,7 @@ random_state = 17
 scaler = StandardScaler()
 n_jobs = -1
 
+# Utility functions for cryptocompare downloads
 
 def set_api_key():
 
@@ -49,7 +48,15 @@ def set_api_key():
         "5db769e8ae211fc8c106e10623db6384dc64db9c26b2a2df708f8d1b53f99f92"
     )
 
-
+def get_tickers_list():
+    # Check CC list dataframe
+    if not os.path.exists("../data/cryptocurrencies.pickle"):
+        cc_url = "https://drive.google.com/uc?export=download&id=1Q09m-PfvhiBZ75lwXaHtafsajmXPW3WD"
+        gdown.download(cc_url, output="../data/cryptocurrencies.pickle")
+    with open("../data/cryptocurrencies.pickle", "rb") as f:
+        ccs = pickle.load(f)
+    return ccs["ticker"].to_list()
+    
 def get_price(ticker: str, time_interval: str, limit: int):
     if time_interval == "day":
         result = cc.get_historical_price_day(ticker, currency="USD",
@@ -67,6 +74,7 @@ def get_price(ticker: str, time_interval: str, limit: int):
 
 def get_all_cc(time_interval: str, limit: int):
     df = pd.DataFrame(index=range(limit))
+    tickers = get_tickers_list()
     for tick in tickers:
         print(tick, end="\t")
         try:
@@ -90,22 +98,25 @@ def get_data():
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     }
-
+    
     # Download, if necessary
     if not os.path.exists("../data/Archive.zip"):
         # Check if data archive is still in Google Drive
         if requests.head(url_arch, headers=headers).status_code in [200, 302]:
-            gdown.download(url_arch, output="../data/Archive.zip")
-            shutil.unpack_archive("../data/Archive.zip", "../data")
-            with open("../data/data_day.pickle", "rb") as f:
-                data_day = pickle.load(f)
-            with open("../data/data_hour.pickle", "rb") as f:
-                data_hour = pickle.load(f)
-            with open("../data/data_minute.pickle", "rb") as f:
-                data_minute = pickle.load(f)
+            try:
+                gdown.download(url_arch, output="../data/Archive.zip")
+                shutil.unpack_archive("../data/Archive.zip", "../data")
+                with open("../data/data_day.pickle", "rb") as f:
+                    data_day = pickle.load(f)
+                with open("../data/data_hour.pickle", "rb") as f:
+                    data_hour = pickle.load(f)
+                with open("../data/data_minute.pickle", "rb") as f:
+                    data_minute = pickle.load(f)
+            except:
+                print("Archive.zip is unavailable in Google Drive")
         # If not, get data from cryptocompare.com
         else:
-            data_day = get_all_cc("day", 30)
+            data_day = get_all_cc("day", 100) # <----------------------------------------- 100
             data_hour = get_all_cc("hour", 72)
             data_minute = get_all_cc("minute", 60)
     # Extract data from existing pickles
@@ -117,24 +128,18 @@ def get_data():
         with open("../data/data_minute.pickle", "rb") as f:
             data_minute = pickle.load(f)
 
+
     return data_day, data_hour, data_minute
 
-    # Check CC list dataframe
-    if not os.path.exists("../data/cryptocurrencies.pickle"):
-        cc_url = "https://drive.google.com/uc?export=download&id=1Q09m-PfvhiBZ75lwXaHtafsajmXPW3WD"
-        gdown.download(cc_url, output="../data/cryptocurrencies.pickle")
-    with open("../data/cryptocurrencies.pickle", "rb") as f:
-        ccs = pickle.load(f)
-    # tickers = ccs["ticker"].to_list()
 
-
-def pickle_data():
-    with open("../data/data_minute.pickle", "wb") as f:
-        pickle.dump(data_minute, f)
-    with open("../data/data_hour.pickle", "wb") as f:
-        pickle.dump(data_hour, f)
+def pickle_data(data_day, data_hour, data_minute):
+    
     with open("../data/data_day.pickle", "wb") as f:
         pickle.dump(data_day, f)
+    with open("../data/data_hour.pickle", "wb") as f:
+        pickle.dump(data_hour, f)
+    with open("../data/data_minute.pickle", "wb") as f:
+        pickle.dump(data_minute, f)
 
 # Utility functions for clustering study
 
@@ -169,7 +174,7 @@ def elbow_study(data, k_max: int = 10, metric="euclidean",
                           curve="convex", direction="decreasing")
     # Use 3 clusters in case kneed doesn't find a knee
     n_clusters = kneedle.knee or 3
-    _, ax1 = plt.subplots(figsize=(14, 5))
+    fig, ax1 = plt.subplots(figsize=(14, 5))
     ax2 = ax1.twinx()
     ax1.plot(range(2, k_max), inertia, marker="s")
     ax1.set_title(f"The Elbow Method using Inertia\nmetric: {metric}")
@@ -209,7 +214,7 @@ def plot_clusters(data, n_clusters, title, metric="euclidean", model=TimeSeriesK
                            random_state=random_state)
     X = scaler.fit_transform(data)
     data.loc["cluster"] = clusterer.fit_predict(X.T)
-#     clusters_no = data.loc["cluster"].nunique()
+    clusters_no = data.loc["cluster"].value_counts(sort=False)
     color = ["g", "r", "b", "purple", "darkorange", "lightblue", "lightgreen"]
     for c in range(n_clusters):
         cc = color[c]
@@ -219,41 +224,45 @@ def plot_clusters(data, n_clusters, title, metric="euclidean", model=TimeSeriesK
             ax[i % 2, i//2].plot(data.iloc[:-1][tick],
                                  color=cc)  # , label=tick)
             ax[i % 2, i//2].set_title(tick)
-        fig.suptitle(f"Cluster {c}\n" + title, y=1.02)
+        fig.suptitle(f"Cluster {c}, {clusters_no[c]} items\n" + title, y=1.02)
         fig.show()
 
 # ************************ TO BE REVISED *****************************
 
 
-def visualize(X, model, **p):
-    mdl = model(**p)
-    X_clust = mdl.fit(X)
-    X_color = X_clust.labels_.astype(str)
-    features = X.values
-    n_features = features.shape[1]
+# def visualize(Xt, n_clusters):
+#     clusterer = KMeans(n_clusters=n_clusters, max_iter=100,
+#                        random_state=random_state)
+#     # X_clust = clusterer.fit(Xt) #_predict
+#     # X_color = X_clust.labels_.astype(str)
+#     X = scaler.fit_transform(Xt.T)
+#     X_clust = clusterer.fit_predict(X.T)
+#     X_color = X_clust.T.astype(str)
 
-    # UMAP
+#     features = Xt.T.values
+#     # n_features = features.shape[1]
 
-    umap_3d = UMAP(n_components=3, init='random',
-                   random_state=random_state)
+#     # UMAP
+#     umap_3d = UMAP(n_components=3, init='random',
+#                    random_state=random_state)
 
-    proj_3d = umap_3d.fit_transform(features)
+#     proj_3d = umap_3d.fit_transform(features)
 
-    fig_3d = px.scatter_3d(
-        proj_3d, x=0, y=1, z=2,
-        color=X_color, labels={'color': 'clusters'},
-        title=f"UMAP-3d projection",
-        width=720, height=480,
-        template="plotly_dark"
-    )
-    fig_3d.update_traces(marker_size=5)
-    fig_3d.show()
+#     fig_3d = px.scatter_3d(
+#         proj_3d, x=0, y=1, z=2,
+#         color=X_color, labels={'color': 'clusters'},
+#         title=f"UMAP-3d projection",
+#         width=720, height=480,
+#         template="plotly_dark"
+#     )
+#     fig_3d.update_traces(marker_size=5)
+#     fig_3d.show()
 
-    cln, cl_size = np.unique(X_color, return_counts=True)
-    clusters = pd.DataFrame(cl_size, index=cln).T.rename(
-        index=({0: "Cluster size"}))
-    clusters.rename_axis(columns=["Cluster #"], inplace=True)
-    return(clusters)
+#     cln, cl_size = np.unique(X_color, return_counts=True)
+#     clusters = pd.DataFrame(cl_size, index=cln).T.rename(
+#         index=({0: "Cluster size"}))
+#     clusters.rename_axis(columns=["Cluster #"], inplace=True)
+#     return(clusters)
 
 # ************************ TO BE REVISED *****************************
 
@@ -269,8 +278,6 @@ def clustering_study(data, metric, title):
     pass
     # Plot CC in clusters
     plot_clusters(data, n_clusters, title, metric=metric)
-
-# ************************ TO BE REVISED *****************************
 
 # Davies Bouldin score for K means
 
@@ -291,7 +298,8 @@ def davies_bouldin_plot(data):
     for n in n_clusters:
         scores[n] = get_kmeans_score(data.T.values, n)
     n_cl = max(scores.keys(), key=(lambda k: scores[k]))
-    _, _ = plt.subplots(figsize=(15, 5))
+
+    _, _ = plt.subplots(figsize=(10, 5))
     plt.plot(n_clusters, scores.values(),
              linestyle='--', marker='s', color='b')
     plt.xlabel("Number of clusters")
@@ -321,8 +329,9 @@ def plot_clusters_2(data, Xt, n_clusters, random_state, title):
                        random_state=random_state)
     X = scaler.fit_transform(Xt)
     data.loc["cluster"] = clusterer.fit_predict(X.T)
-    #     clusters_no = data.loc["cluster"].nunique()
     color = ["g", "r", "b", "purple", "darkorange", "lightblue", "lightgreen"]
+    clusters_no = data.loc["cluster"].value_counts(sort=False)
+
     for c in range(n_clusters):
         cc = color[c]
         fig, ax = plt.subplots(2, 4, sharex='col', figsize=(15, 5))
@@ -331,5 +340,6 @@ def plot_clusters_2(data, Xt, n_clusters, random_state, title):
             ax[i % 2, i//2].plot(data.iloc[:-1][tick],
                                  color=cc)  # , label=tick)
             ax[i % 2, i//2].set_title(tick)
-        fig.suptitle(f"Cluster {c}\n" + title, y=1.02)
+        fig.suptitle(f"Cluster {c}, {clusters_no[c]} items\n" + title, y=1.02)
         fig.show()
+    return(data.copy())
