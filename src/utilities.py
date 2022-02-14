@@ -51,13 +51,9 @@ def set_api_key():
 
 
 def get_tickers_list():
-    # Check CC list dataframe
-    if not os.path.exists("../data/cryptocurrencies.pickle"):
-        cc_url = "https://drive.google.com/uc?export=download&id=1Q09m-PfvhiBZ75lwXaHtafsajmXPW3WD"
-        gdown.download(cc_url, output="../data/cryptocurrencies.pickle")
-    with open("../data/cryptocurrencies.pickle", "rb") as f:
-        ccs = pickle.load(f)
-    return ccs["ticker"].to_list()
+    with open("../data/tickers.txt","r") as f:
+        tickers = f.read().split(', ')
+    return tickers
 
 
 def get_price(ticker: str, time_interval: str, limit: int):
