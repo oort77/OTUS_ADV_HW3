@@ -33,13 +33,11 @@ motifs and discords (anomalies) on CC from various clusters.
 
 - CC prices will be downloaded with [cryptocompare](https://github.com/lagerfeuer/cryptocompare) library.
 
-**Colab notebooks:**
+**Binder notebooks:**
 
 otus_adv_hw3_dtw.ipynb: tslearn and tsfel clustering   
-
-<a href="https://colab.research.google.com/github/oort77/OTUS_ADV_HW3/blob/main/notebooks/otus_adv_hw3_dtw.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>  
 
 clustering_mef.ipynb: Markowitz Efficient Frontier. Trying to beat 5 largest  
 cryptocurrencies with clustering approach
 
-<a href="https://colab.research.google.com/github/oort77/OTUS_ADV_HW3/blob/main/notebooks/clustering_mef.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/oort77/OTUS_ADV_HW3/main)  
