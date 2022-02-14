@@ -23,7 +23,7 @@ import tsfel
 import cryptocompare as cc
 
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 # import plotly.express as px
 # import plotly
 # from umap import UMAP
