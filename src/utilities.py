@@ -98,18 +98,18 @@ def get_data():
         data_hour = get_all_cc("hour", 72)
         data_minute = get_all_cc("minute", 60)
     else:
-        data_day = pd. read_pickle("../data/data_day.pickle")
-        data_hour = pd. read_pickle("../data/data_hour.pickle")
-        data_minute = pd. read_pickle("../data/data_minute.pickle")
+        data_day = pd.read_pickle("../data/data_day.pickle")
+        data_hour = pd.read_pickle("../data/data_hour.pickle")
+        data_minute = pd.read_pickle("../data/data_minute.pickle")
 
     return data_day, data_hour, data_minute
 
 
 def pickle_data(data_day, data_hour, data_minute):
 
-    data_day.to_pickle("../data/data_day.pickle")
-    data_hour.to_pickle("../data/data_hour.pickle")
-    data_minute.to_pickle("../data/data_minute.pickle")
+    data_day.to_pickle("../data/data_day.pickle", protocol=4)
+    data_hour.to_pickle("../data/data_hour.pickle", protocol=4)
+    data_minute.to_pickle("../data/data_minute.pickle", protocol=4)
 
 # Utility functions for clustering study
 
